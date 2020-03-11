@@ -1,0 +1,28 @@
+{
+  "name": "epage-cli",
+  "version": "0.1.0",
+  "description": "epage cli tool",
+  "scripts": {
+    "build": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/epage-team/epage-cli.git"
+  },
+  "keywords": ["epage", "cli", "tool"],
+  "author": "Chengzi <ttghost@126.com>",
+  "license": "MIT",
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint && git add .",
+      "commit-msg": "node build/verify-commit-msg.js"
+    }
+  },
+  "bugs": {
+    "url": "https://github.com/epage-team/epage-cli/issues"
+  },
+  "homepage": "https://github.com/epage-team/epage-cli#readme",
+  "dependencies": {
+    "husky": "^4.2.3"
+  }
+}

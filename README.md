@@ -1,2 +1,8 @@
-# epage-cli
-epage cli tools
+# Epage Cli
+
+epage cli tool
+
+
+## License
+
+[MIT](./LICENSE)
