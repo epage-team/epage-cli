@@ -5,17 +5,24 @@
   "scripts": {
     "build": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {
+    "epage": "./bin/epage.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/epage-team/epage-cli.git"
   },
-  "keywords": ["epage", "cli", "tool"],
+  "keywords": [
+    "epage",
+    "cli",
+    "tool"
+  ],
   "author": "Chengzi <ttghost@126.com>",
   "license": "MIT",
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint && git add .",
-      "commit-msg": "node build/verify-commit-msg.js"
+      "pre-commit": "git add .",
+      "commit-msg": "node scripts/verify-commit-msg.js"
     }
   },
   "bugs": {
@@ -23,6 +30,11 @@
   },
   "homepage": "https://github.com/epage-team/epage-cli#readme",
   "dependencies": {
+    "download-git-repo": "^3.0.2",
+    "chalk": "^3.0.0",
+    "commander": "^4.0.1",
+    "ora": "^4.0.3",
+    "shelljs": "^0.8.3",
     "husky": "^4.2.3"
   }
 }
