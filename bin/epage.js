@@ -66,15 +66,20 @@ function replaceTpl (projPath, filePath, callback) {
 function getName (projPath) {
   const names = projPath.split('/')
   return names[names.length - 1]
+    .replace(/[A-Z]/g, function(s){
+      return '-' + s.toLowerCase();
+    })
+    .replace(/^(\-)*/g, '')
+    .replace(/(\-)*$/g, '')
 }
 
 function bigCamel (name) {
-  name
-  .split(/[\s\-\_]+/g)
-  .map(w => {
-    const first = w[0]
-    const other = w.slice(1)
-    return first.toUpperCase() + other;
-  })
-  .join('')
+  return name
+    .split(/[\s\-\_]+/g)
+    .map(w => {
+      const first = w[0]
+      const other = w.slice(1)
+      return first.toUpperCase() + other;
+    })
+    .join('')
 }
