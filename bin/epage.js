@@ -30,7 +30,7 @@ program
         path.resolve(targetPath, './build/webpack.build.js'),
       ]
       files.forEach(f => {
-        replaceTpl(f)
+        replaceTpl(targetPath, f)
       })
   
       // npm intall
@@ -45,14 +45,14 @@ program
 program.parse(process.argv)
 
 
-function replaceTpl (filePath, callback) {
+function replaceTpl (projPath, filePath, callback) {
   fs.readFile(filePath, 'utf8', function (err, data) {
     if (err) throw err
 
-    const name = getName(filePath)
+    const name = getName(projPath)
     const result = data
-      .replace(/\$\{\{project_name\}\}/g, name)
-      .replace(/\$\{\{project_name_camel\}\}/g, bigCamel(name))
+      .replace(/\$\$\{project_name\}/g, name)
+      .replace(/\$\$\{project_name_camel\}/g, bigCamel(name))
 
     fs.writeFile(filePath, result, function (err) {
       if (err) throw err
