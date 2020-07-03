@@ -7,6 +7,7 @@ const shell = require('shelljs')
 const download = require('download-git-repo')
 const fs = require('fs')
 const path = require('path')
+const pkg = require('../package.json')
 
 program
   .command('init [project name]')
@@ -24,7 +25,7 @@ program
       shell.cd(targetPath)
       shell.rm('-rf', `${targetPath}/.git`)
       shell.rm('-rf', `${targetPath}/CHANGELOG.md`)
-      spinner.succeed('Template Has Been Downloaded!')
+      spinner.succeed('The template aas been downloaded!')
       const files = [
         path.resolve(targetPath, 'package.json'),
         path.resolve(targetPath, './build/webpack.build.js'),
@@ -32,33 +33,41 @@ program
       files.forEach(f => {
         replaceTpl(targetPath, f)
       })
-  
-      // npm intall
-      spinner.start('npm install ...')
-      // shell.exec('npm install')
-      spinner.succeed(chalk.green('created!'))
-      shell.cd('-')
+      const allFiles = files.map(function (file) {
+        return replaceTpl(targetPath, file)
+      })
+      Promise.all(allFiles).then(function(files) {
+        spinner.start('npm install ...')
+        shell.exec('npm install')
+        spinner.succeed(chalk.green('created!'))
+        shell.cd('-')
+      }).catch(function (err) {
+        throw err
+      })
     })
 
   })
+  .version(pkg.version)
+  .option('-v --version', 'epage cli version')
+  .parse(process.argv)
   
 program.parse(process.argv)
 
 
-function replaceTpl (projPath, filePath, callback) {
-  fs.readFile(filePath, 'utf8', function (err, data) {
-    if (err) throw err
+function replaceTpl (projPath, filePath) {
+  return new Promise(function (resolve, reject) {
+    fs.readFile(filePath, 'utf8', function (err, data) {
+      if (err) reject(err)
 
-    const name = getName(projPath)
-    const result = data
-      .replace(/\$\$\{project_name\}/g, name)
-      .replace(/\$\$\{project_name_camel\}/g, bigCamel(name))
+      const name = getName(projPath)
+      const result = data
+        .replace(/\$\$\{project_name\}/g, name)
+        .replace(/\$\$\{project_name_camel\}/g, bigCamel(name))
 
-    fs.writeFile(filePath, result, function (err) {
-      if (err) throw err
-      if (typeof callback === 'function') {
-        callback()
-      }
+      fs.writeFile(filePath, result, function (err) {
+        if (err) reject(err)
+        resolve(filePath)
+      })
     })
   })
 }
