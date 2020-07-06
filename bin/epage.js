@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const program = require('commander')
 const chalk = require('chalk')
-const repos = require('./repos')
+const REPOS = require('./repos')
 const ora = require('ora')
 const shell = require('shelljs')
 const download = require('download-git-repo')
@@ -12,16 +12,16 @@ const pkg = require('../package.json')
 program
   .command('init [project name]')
   .description('init epage widget project')
-  .action((name) => {
+  .option('--tpl <tpl>', 'select template', 'iview')
+  .action((name, cmdObj) => {
+    const { tpl } = cmdObj
+    const tplName = (tpl && tpl in REPOS) ? tpl : 'iview'
 
-    const _name = name || repos.iview.name
+    const _name = name || REPOS[tplName].name
     const targetPath = path.resolve(process.cwd(), _name)
     const spinner = ora('Downloading template...').start()
+    download(REPOS[tplName].git, targetPath, function (err) {
 
-    download(repos.iview.git, targetPath, function (err) {
-
-      // clone template
-      // shell.exec(`git clone ${repos.iview.git} ${targetPath}`)
       shell.cd(targetPath)
       shell.rm('-rf', `${targetPath}/.git`)
       shell.rm('-rf', `${targetPath}/CHANGELOG.md`)
@@ -47,12 +47,12 @@ program
     })
 
   })
-  .version(pkg.version)
-  .option('-v --version', 'epage cli version')
-  .parse(process.argv)
   
-program.parse(process.argv)
 
+program.version(pkg.version)
+  .option('-v --version', 'epage cli version')
+  .description('init epage widget project')
+  .parse(process.argv)
 
 function replaceTpl (projPath, filePath) {
   return new Promise(function (resolve, reject) {
