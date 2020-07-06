@@ -25,7 +25,7 @@ program
       shell.cd(targetPath)
       shell.rm('-rf', `${targetPath}/.git`)
       shell.rm('-rf', `${targetPath}/CHANGELOG.md`)
-      spinner.succeed('The template aas been downloaded!')
+      spinner.succeed('The template has been downloaded!')
       const files = [
         path.resolve(targetPath, 'package.json'),
         path.resolve(targetPath, './build/webpack.build.js'),
@@ -73,13 +73,14 @@ function replaceTpl (projPath, filePath) {
 }
 
 function getName (projPath) {
-  const names = projPath.split('/')
+  const names = projPath.trim().split(/[\\\/]/)
   return names[names.length - 1]
+    .replace(/[\-\s\._]+/g, '-')
     .replace(/[A-Z]/g, function(s){
       return '-' + s.toLowerCase();
     })
-    .replace(/^(\-)*/g, '')
-    .replace(/(\-)*$/g, '')
+    .replace(/^\-*|\-*$/g, '')
+    .replace(/\-+/g, '-')
 }
 
 function bigCamel (name) {
