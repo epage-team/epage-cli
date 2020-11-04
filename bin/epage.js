@@ -37,7 +37,7 @@ program
         return replaceTpl(targetPath, file)
       })
       Promise.all(allFiles).then(function(files) {
-        spinner.start('npm install ...')
+        spinner.start('npm install ...\n')
         shell.exec('npm install')
         spinner.succeed(chalk.green('created!'))
         shell.cd('-')
@@ -56,7 +56,7 @@ program.version(pkg.version)
 
 function replaceTpl (projPath, filePath) {
   return new Promise(function (resolve, reject) {
-    fs.readFile(filePath, 'utf8', function (err, data) {
+    fs.readFile(filePath, 'utf8', function (err, data = '') {
       if (err) reject(err)
 
       const name = getName(projPath)
