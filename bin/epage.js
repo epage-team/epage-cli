@@ -20,6 +20,7 @@ program
     const _name = name || REPOS[tplName].name
     const targetPath = path.resolve(process.cwd(), _name)
     const spinner = ora('Downloading template...').start()
+    shell.mkdir('-p', targetPath)
     download(REPOS[tplName].git, targetPath, function (err) {
 
       shell.cd(targetPath)
