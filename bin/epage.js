@@ -21,7 +21,15 @@ program
     const targetPath = path.resolve(process.cwd(), _name)
     const spinner = ora('Downloading template...').start()
     shell.mkdir('-p', targetPath)
+    console.log('\ntemplate repos:', REPOS[tplName].git)
+
     download(REPOS[tplName].git, targetPath, function (err) {
+
+      if (err) {
+        spinner.fail('clone error!\n')
+        console.error(err)
+        return err
+      }
 
       shell.cd(targetPath)
       shell.rm('-rf', `${targetPath}/.git`)
