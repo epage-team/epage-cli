@@ -23,7 +23,7 @@ program
     shell.mkdir('-p', targetPath)
     console.log('\ntemplate repos:', REPOS[tplName].git)
 
-    download(REPOS[tplName].git, targetPath, function (err) {
+    download(REPOS[tplName].git, targetPath, { clone: true }, function (err) {
 
       if (err) {
         spinner.fail('clone error!\n')
@@ -42,17 +42,20 @@ program
       files.forEach(f => {
         replaceTpl(targetPath, f)
       })
-      const allFiles = files.map(function (file) {
-        return replaceTpl(targetPath, file)
-      })
-      Promise.all(allFiles).then(function(files) {
-        spinner.start('npm install ...\n')
-        shell.exec('npm install')
-        spinner.succeed(chalk.green('created!'))
-        shell.cd('-')
-      }).catch(function (err) {
-        throw err
-      })
+
+      shell.cd('-')
+      console.log(chalk.green(`\n    cd ${_name}`))
+      console.log(chalk.green('    npm install'))
+      console.log(chalk.green('    npm start\n'))
+
+      // Promise.all(allFiles).then(function(files) {
+      //   spinner.start('npm install ...\n')
+      //   shell.exec('npm install')
+      //   spinner.succeed(chalk.green('created!'))
+      //   shell.cd('-')
+      // }).catch(function (err) {
+      //   throw err
+      // })
     })
 
   })
