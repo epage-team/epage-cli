@@ -38,6 +38,7 @@ program
       const files = [
         path.resolve(targetPath, 'package.json'),
         path.resolve(targetPath, './build/webpack.build.js'),
+        path.resolve(targetPath, './build/webpack.style.js'),
       ]
       files.forEach(f => {
         replaceTpl(targetPath, f)
