@@ -14,16 +14,21 @@ program
   .description('init epage widget project')
   .option('--tpl <tpl>', 'select template', 'iview')
   .action((name, cmdObj) => {
-    const { tpl } = cmdObj
-    const tplName = (tpl && tpl in REPOS) ? tpl : 'iview'
+    if (!name) {
+      console.log(chalk.red(`\n[project name] is required!!!`))
+      return
+    }
+    let { tpl } = cmdObj
+    const tplPath = getTPLPath(tpl)
+    if (!tplPath) return
 
-    const _name = name || REPOS[tplName].name
-    const targetPath = path.resolve(process.cwd(), _name)
+    const targetPath = path.resolve(process.cwd(), name)
     const spinner = ora('Downloading template...').start()
     shell.mkdir('-p', targetPath)
-    console.log('\ntemplate repos:', REPOS[tplName].git)
+    console.log('\ntemplate repos:', tplPath.path)
 
-    download(REPOS[tplName].git, targetPath, { clone: true }, function (err) {
+    const downloadURL = tplPath.fullpath ? `direct:${tplPath.path}` : tplPath.path
+    download(downloadURL, targetPath, { clone: true }, function (err) {
 
       if (err) {
         spinner.fail('clone error!\n')
@@ -45,20 +50,11 @@ program
       })
 
       shell.cd('-')
-      console.log(chalk.green(`\n    cd ${_name}`))
+      console.log(chalk.green(`\n    cd ${name}`))
       console.log(chalk.green('    npm install'))
       console.log(chalk.green('    npm start\n'))
 
-      // Promise.all(allFiles).then(function(files) {
-      //   spinner.start('npm install ...\n')
-      //   shell.exec('npm install')
-      //   spinner.succeed(chalk.green('created!'))
-      //   shell.cd('-')
-      // }).catch(function (err) {
-      //   throw err
-      // })
     })
-
   })
   
 
@@ -67,8 +63,33 @@ program.version(pkg.version)
   .description('init epage widget project')
   .parse(process.argv)
 
+function getTPLPath (tpl) {
+  let result = null
+  if (!tpl) {
+    result = {
+      fullpath: false,
+      path: REPOS.iview.git // default tpl
+    }
+  } else if (tpl in REPOS) {
+    result = {
+      fullpath: false,
+      path: REPOS[tpl].git
+    }
+  } else if (/^git@.{3,}/.test(tpl)) {
+    result = {
+      fullpath: true,
+      path: tpl
+    }
+  } else {
+    console.log(chalk.red(`\ntpl is not available!!!`))
+    return 
+  }
+  return result
+}
+
 function replaceTpl (projPath, filePath) {
   return new Promise(function (resolve, reject) {
+    if (!fs.existsSync(filePath)) return
     fs.readFile(filePath, 'utf8', function (err, data = '') {
       if (err) reject(err)
       if (!data) reject(data)

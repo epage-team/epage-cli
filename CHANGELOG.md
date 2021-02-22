@@ -1,5 +1,13 @@
 # Change Log
 
+### 0.2.0（2021/2/22）
+
+- [fix] : 增加对自定义模板的支持
+
+```
+epage init epageTest --tpl git@github.com:epage-team/epage-template-vant.git
+```
+
 ### 0.1.5（2020/12/12）
 
 - [fix] : 修复创建文件夹失败问题
